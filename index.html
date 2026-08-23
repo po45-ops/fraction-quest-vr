@@ -3,25 +3,53 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#071a2b" />
+  <meta name="theme-color" content="#32156f" />
+  <meta name="description" content="Fraction Quest AR เกมเปรียบเทียบเศษส่วนผ่านกล้องและการจับการเคลื่อนไหวของมือ" />
   <title>Fraction Quest AR</title>
+  <link rel="preload" href="./assets/home/fraction-quest-ar-home.mp4" as="video" type="video/mp4" />
   <link rel="stylesheet" href="./styles.css" />
-  <link rel="stylesheet" href="./home.css" />
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
 </head>
 <body>
   <div id="ar-app">
     <section id="home-screen" aria-label="หน้าแรก Fraction Quest AR">
       <div class="home-stage">
-        <img class="home-art" src="./assets/home/fraction-quest-ar-home-landscape.jpg" alt="Fraction Quest AR หน้าเริ่มเกม" />
-        <button id="home-start" class="home-hotspot home-start-hotspot" type="button" aria-label="เริ่มเกม"><span class="sr-only">เริ่มเกม</span></button>
-        <button id="home-how" class="home-hotspot home-how-hotspot" type="button" aria-label="วิธีเล่น"><span class="sr-only">วิธีเล่น</span></button>
-        <button id="home-settings" class="home-hotspot home-settings-hotspot" type="button" aria-label="ตั้งค่า"><span class="sr-only">ตั้งค่า</span></button>
+        <video
+          id="home-video"
+          class="home-art"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="auto"
+          poster="./assets/home/fraction-quest-ar-home-poster.jpg"
+          aria-label="ภาพเคลื่อนไหวหน้าเริ่มเกม Fraction Quest AR"
+        >
+          <source src="./assets/home/fraction-quest-ar-home.mp4" type="video/mp4" />
+        </video>
+
+        <div id="home-loading" class="home-loading" aria-live="polite">
+          <span></span> กำลังเตรียมโลกแห่งเศษส่วน…
+        </div>
+
+        <button id="home-start" class="home-hotspot home-start-hotspot" type="button" aria-label="เริ่มเกม">
+          <span class="sr-only">เริ่มเกม</span>
+        </button>
+        <button id="home-how" class="home-hotspot home-how-hotspot" type="button" aria-label="วิธีเล่น">
+          <span class="sr-only">วิธีเล่น</span>
+        </button>
+        <button id="home-settings" class="home-hotspot home-settings-hotspot" type="button" aria-label="ตั้งค่า">
+          <span class="sr-only">ตั้งค่า</span>
+        </button>
+        <button id="home-sound" class="home-hotspot home-sound-hotspot" type="button" aria-label="เปิดเสียงหน้าแรก" aria-pressed="false">
+          <span class="sr-only">เปิดหรือปิดเสียงหน้าแรก</span>
+        </button>
       </div>
     </section>
 
     <section id="home-dialog" class="home-dialog" hidden aria-modal="true" role="dialog" aria-labelledby="home-dialog-title">
       <div class="home-dialog-card">
+        <div class="dialog-star" aria-hidden="true">★</div>
         <h2 id="home-dialog-title">วิธีเล่น</h2>
         <div id="home-dialog-body"></div>
         <div class="home-dialog-actions">
@@ -32,76 +60,164 @@
       </div>
     </section>
 
+    <div class="game-backdrop" aria-hidden="true">
+      <span class="orb orb-one"></span>
+      <span class="orb orb-two"></span>
+      <span class="orb orb-three"></span>
+      <span class="spark spark-one">✦</span>
+      <span class="spark spark-two">✧</span>
+      <span class="spark spark-three">★</span>
+    </div>
     <video id="camera" autoplay playsinline muted aria-label="ภาพจากกล้องสำหรับโหมด AR"></video>
     <canvas id="hand-canvas" aria-hidden="true"></canvas>
     <div class="camera-vignette" aria-hidden="true"></div>
 
     <header class="hud top-hud">
-      <div>
+      <div class="brand-lockup" aria-label="Fraction Quest AR">
         <div class="eyebrow">CAMERA AR • HAND TRACKING</div>
-        <h1>Fraction Quest AR <span>🐰</span></h1>
+        <div class="game-logo" aria-hidden="true">
+          <span class="logo-fraction">Fraction</span>
+          <span class="logo-quest">Quest</span>
+          <span class="logo-ar">AR</span>
+          <span class="logo-bunny">🐰</span>
+        </div>
       </div>
-      <div class="hud-stats">
-        <div><small>ข้อ</small><strong id="progress-text">1 / 14</strong></div>
-        <div><small>ดาว</small><strong id="star-text">0 ★</strong></div>
-        <div><small>คะแนน</small><strong id="score-text">0</strong></div>
+
+      <div class="hud-stats" aria-label="สถิติการเล่น">
+        <div class="stat-card stat-progress">
+          <small>ข้อ</small>
+          <strong id="progress-text">1 / 14</strong>
+        </div>
+        <div class="stat-card stat-stars">
+          <small>ดาว</small>
+          <strong id="star-text">0 <span aria-hidden="true">★</span></strong>
+        </div>
+        <div class="stat-card stat-score">
+          <small>คะแนน</small>
+          <strong id="score-text">0</strong>
+        </div>
       </div>
     </header>
 
     <main id="game-layer">
-      <section id="question-card" class="glass-card" aria-live="polite">
-        <div class="mission-label">ภารกิจ: เลือกเครื่องหมายที่ถูกต้อง</div>
+      <section id="question-card" class="quest-board" aria-live="polite">
+        <div class="board-leaf board-leaf-left" aria-hidden="true">❧</div>
+        <div class="board-leaf board-leaf-right" aria-hidden="true">❧</div>
+
+        <div class="mission-label">
+          <span aria-hidden="true">★</span>
+          <strong>ภารกิจ: เลือกเครื่องหมายที่ถูกต้อง</strong>
+          <span aria-hidden="true">★</span>
+        </div>
+
         <div class="fraction-row">
-          <div id="left-fraction" class="fraction">3/8</div>
+          <article class="fraction-card" aria-label="เศษส่วนด้านซ้าย">
+            <div id="left-fraction" class="fraction" role="img" aria-label="สามส่วนแปด">
+              <span id="left-numerator" class="numerator">3</span>
+              <span class="fraction-line"></span>
+              <span id="left-denominator" class="denominator">8</span>
+            </div>
+          </article>
+
           <div id="drop-zone" class="drop-zone" aria-label="วางเครื่องหมายตรงนี้">
             <span id="drop-symbol">?</span>
             <small>วางตรงนี้</small>
           </div>
-          <div id="right-fraction" class="fraction">10/12</div>
+
+          <article class="fraction-card" aria-label="เศษส่วนด้านขวา">
+            <div id="right-fraction" class="fraction" role="img" aria-label="สิบส่วนสิบสอง">
+              <span id="right-numerator" class="numerator">10</span>
+              <span class="fraction-line"></span>
+              <span id="right-denominator" class="denominator">12</span>
+            </div>
+          </article>
         </div>
 
-        <div id="hint-panel" class="hint-panel" hidden>
-          <div class="bar-row">
-            <span id="left-hint-label">3/8</span>
-            <div class="fraction-bar"><i class="half-marker"></i><b id="left-fill"></b></div>
-            <strong id="left-half">&lt; 1/2</strong>
-          </div>
-          <div class="bar-row">
-            <span id="right-hint-label">10/12</span>
-            <div class="fraction-bar"><i class="half-marker"></i><b id="right-fill"></b></div>
-            <strong id="right-half">&gt; 1/2</strong>
+        <div id="answer-feedback" class="answer-feedback" hidden>
+          <span id="feedback-icon" aria-hidden="true">✓</span>
+          <strong id="feedback-title">ถูก</strong>
+          <small id="feedback-detail">เก่งมาก!</small>
+        </div>
+
+        <div id="hint-panel" class="explanation-panel" hidden>
+          <div class="explanation-heading"><span aria-hidden="true">💡</span> เฉลยด้วยการเทียบกับ 1/2</div>
+          <div class="bar-grid">
+            <div class="bar-row">
+              <span id="left-hint-label" class="bar-fraction">3/8</span>
+              <div class="fraction-bar" aria-hidden="true"><i class="half-marker"></i><b id="left-fill"></b></div>
+              <strong id="left-half">&lt; 1/2</strong>
+            </div>
+            <div class="bar-row">
+              <span id="right-hint-label" class="bar-fraction">10/12</span>
+              <div class="fraction-bar" aria-hidden="true"><i class="half-marker"></i><b id="right-fill"></b></div>
+              <strong id="right-half">&gt; 1/2</strong>
+            </div>
           </div>
         </div>
-        <div id="status-text" class="status-text">ยกมือขึ้นหน้ากล้อง แล้วจีบนิ้วโป้งกับนิ้วชี้เพื่อหยิบสัญลักษณ์</div>
+
+        <div id="status-text" class="status-text">จีบนิ้วเพื่อหยิบเครื่องหมาย แล้วปล่อยลงในช่องกลาง</div>
       </section>
 
-      <div id="hand-tip" class="hand-tip">
-        <span class="hand-icon">🤏</span>
-        <span><strong>จีบเพื่อหยิบ</strong><small>ขยับมือไปกลางโจทย์ แล้วปล่อยนิ้วเพื่อวาง</small></span>
-      </div>
+      <aside id="hand-tip" class="hand-tip">
+        <span class="hand-icon" aria-hidden="true">🤏</span>
+        <span><strong>จีบเพื่อหยิบ</strong><small>ขยับมือไปวางคำตอบ แล้วปล่อยนิ้ว</small></span>
+      </aside>
 
       <section id="symbol-tray" aria-label="สัญลักษณ์คำตอบ">
-        <button class="symbol-card" data-answer="<" type="button" aria-label="น้อยกว่า">&lt;<span></span></button>
-        <button class="symbol-card" data-answer="=" type="button" aria-label="เท่ากับ">=<span></span></button>
-        <button class="symbol-card" data-answer=">" type="button" aria-label="มากกว่า">&gt;<span></span></button>
+        <button class="symbol-card symbol-less" data-answer="<" type="button" aria-label="น้อยกว่า">
+          <span class="symbol-glyph">&lt;</span><i aria-hidden="true"></i>
+        </button>
+        <button class="symbol-card symbol-equal" data-answer="=" type="button" aria-label="เท่ากับ">
+          <span class="symbol-glyph">=</span><i aria-hidden="true"></i>
+        </button>
+        <button class="symbol-card symbol-more" data-answer=">" type="button" aria-label="มากกว่า">
+          <span class="symbol-glyph">&gt;</span><i aria-hidden="true"></i>
+        </button>
       </section>
 
-      <button id="hint-button" class="hint-button" type="button">💡 Hint: เทียบกับ 1/2</button>
+      <button id="hint-button" class="hint-button" type="button"><span aria-hidden="true">💡</span> Hint: เทียบกับ 1/2</button>
+
+      <div id="result-dock" class="result-dock" role="status" aria-live="polite">
+        <span aria-hidden="true">★</span>
+        <strong id="result-dock-text">ผลลัพธ์จะแสดงที่นี่</strong>
+        <span aria-hidden="true">★</span>
+      </div>
     </main>
 
     <div id="hand-cursor" class="hand-cursor" aria-hidden="true"><span></span></div>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <div id="celebration-layer" class="celebration-layer" aria-hidden="true"></div>
 
     <section id="start-screen" class="start-screen hidden" aria-hidden="true">
       <div class="start-card">
-        <div class="mascot">🐰</div>
+        <div class="mascot" aria-hidden="true">🐰</div>
         <div class="eyebrow">FRACTION QUEST AR</div>
-        <h2>กำลังเข้าสู่โหมด AR</h2>
-        <p>อนุญาตการใช้กล้อง จากนั้นยกมือขึ้นหน้ากล้องเพื่อเริ่มเล่น</p>
-        <div class="gesture-demo"><span>✋</span><b>→</b><span>🤏</span><b>→</b><span class="mini-symbol">&gt;</span></div>
-        <button id="start-button" type="button">📷 เปิดกล้องและเริ่มเกม</button>
-        <small>กล้องใช้เพื่อประมวลผลการเคลื่อนไหวของมือในเบราว์เซอร์ • ต้องอนุญาตสิทธิ์กล้อง</small>
+        <h2>พร้อมออกผจญภัยแล้วหรือยัง?</h2>
+        <p>อนุญาตการใช้กล้อง แล้วใช้มือจริงหยิบเครื่องหมายมาเปรียบเทียบเศษส่วน</p>
+        <div class="gesture-demo" aria-hidden="true"><span>✋</span><b>→</b><span>🤏</span><b>→</b><span class="mini-symbol">&gt;</span></div>
+        <button id="start-button" class="camera-start-button" type="button">📷 เปิดกล้องและเริ่มเกม</button>
+        <button id="pointer-mode-button" class="pointer-mode-button" type="button">เล่นด้วยเมาส์ / หน้าจอสัมผัส</button>
+        <small>วิดีโอใช้เพื่อตรวจจับมือภายในเบราว์เซอร์เท่านั้น ไม่มีการบันทึกหรืออัปโหลด</small>
         <div id="camera-error" class="camera-error" hidden></div>
+      </div>
+    </section>
+
+    <section id="finish-screen" class="finish-screen hidden" aria-hidden="true">
+      <div class="finish-card">
+        <div class="finish-rays" aria-hidden="true"></div>
+        <div class="finish-mascot" aria-hidden="true">🐰</div>
+        <div class="finish-kicker">ภารกิจสำเร็จ!</div>
+        <h2>สุดยอดนักผจญภัยเศษส่วน</h2>
+        <div class="finish-stars" aria-hidden="true">★ ★ ★</div>
+        <div class="finish-stats">
+          <div><small>ความแม่นยำ</small><strong id="finish-accuracy">100%</strong></div>
+          <div><small>ดาวทั้งหมด</small><strong id="finish-stars">42 ★</strong></div>
+          <div><small>คะแนน</small><strong id="finish-score">1,960</strong></div>
+        </div>
+        <div class="finish-actions">
+          <button id="replay-button" type="button">↻ เล่นอีกครั้ง</button>
+          <button id="return-home-button" class="secondary" type="button">⌂ กลับหน้าแรก</button>
+        </div>
       </div>
     </section>
   </div>
