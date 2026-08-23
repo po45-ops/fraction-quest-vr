@@ -1,0 +1,1 @@
+Home cover image used by index.html. If the image fails to load, the CSS fallback in home.css remains usable.
