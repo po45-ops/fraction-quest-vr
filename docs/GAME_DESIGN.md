@@ -1,15 +1,24 @@
-# Fraction Quest VR — Game Design
+# Fraction Quest AR — Game Design
 
 ## Player fantasy
-ผู้เล่นคือ “นักสำรวจเศษส่วน” ที่ช่วยกระต่ายสร้างสะพานกลับปราสาท โดยเลือก `<`, `=` หรือ `>` ให้ถูกต้อง
+ผู้เล่นคือ “นักสำรวจเศษส่วน” ที่ใช้ **มือจริงผ่านภาพจากกล้อง** เพื่อหยิบสัญลักษณ์คณิตศาสตร์และช่วยกระต่ายแก้ปริศนาเศษส่วน
+
+## Core interaction
+1. กล้องด้านหน้าจับภาพผู้เล่น
+2. ระบบตรวจจับมือแสดง hand cursor / skeleton overlay
+3. ผู้เล่นนำมือไปเหนือสัญลักษณ์ `<`, `=` หรือ `>`
+4. จีบนิ้วโป้งกับนิ้วชี้เพื่อ “หยิบ”
+5. ขยับมือไปยังช่องวางตรงกลางโจทย์
+6. คลายนิ้วเพื่อ “ปล่อย” คำตอบ
+7. เกมตรวจคำตอบและให้ feedback ทันที
 
 ## Core loop
-1. เห็นเศษส่วน 2 จำนวน
-2. เทียบแต่ละจำนวนกับ `1/2`
-3. เลือกเครื่องหมาย
-4. รับ feedback ทันที
-5. ใช้ Hint เพื่อดู Fraction Bar 3D
-6. เก็บดาวและดูผลสรุป
+1. เห็นเศษส่วน 2 จำนวนซ้อนอยู่บนภาพโลกจริงจากกล้อง
+2. พิจารณาแต่ละจำนวนเทียบกับ `1/2`
+3. ใช้มือหยิบเครื่องหมายที่คิดว่าถูก
+4. ลากและวางใน answer slot
+5. หากผิด สามารถใช้ Hint เพื่อเปิด Fraction Bar
+6. เก็บดาวและคะแนนแล้วไปข้อถัดไป
 
 ## Learning design
 สำหรับเศษส่วน `a/b`:
@@ -22,17 +31,19 @@
 - ถูกครั้งที่สอง: 2 ดาว
 - ใช้ Hint หรือพลาดหลายครั้ง: 1 ดาว
 
-## VR interaction
-MVP รองรับ desktop cursor และ VR laser controller ผ่าน WebXR ส่วน roadmap คือ grab-and-drop, haptics และ hand tracking
+## AR interaction design
+เกมเป็น **camera-based AR** ไม่ใช่ immersive VR ผู้เล่นยังมองเห็นตัวเอง/ห้องผ่านกล้อง และ UI/โจทย์จะซ้อนอยู่บนภาพนั้น
+
+MVP ใช้ MediaPipe Hands เพื่อตรวจจับมือหนึ่งข้างและคำนวณ pinch gesture จากระยะระหว่างปลายนิ้วโป้งกับนิ้วชี้ เมื่อจีบ ระบบสร้าง draggable ghost ของสัญลักษณ์และติดตามตำแหน่งปลายนิ้วชี้จนกว่าจะปล่อย
 
 ## Visual direction
-3D cartoon educational adventure, ฉากฟ้า/เขียวอ่อน, ปุ่มใหญ่ contrast สูง และกระต่าย low-poly เป็น mascot
+Modern educational AR HUD — glassmorphism, สีเขียวมิ้นต์/ฟ้า, contrast สูง, สัญลักษณ์ขนาดใหญ่ และกระต่ายเป็น mascot
 
 ## Roadmap scenes
-- Rabbit Training
-- Half Bridge (MVP)
-- Fraction Kitchen
-- Fraction Castle
+- Rabbit Training — สอน gesture จีบ/ลาก/ปล่อย
+- Half Bridge — เปรียบเทียบโดยใช้ 1/2 เป็นเกณฑ์
+- Fraction Kitchen — เศษส่วนจากอาหารและวัตถุจริง
+- Fraction Castle — ด่านผสมและ challenge
 
 ## Teacher mode roadmap
 เพิ่ม/ลบโจทย์, เลือก skill, ดู accuracy รายข้อ, export CSV และสร้าง session สำหรับนักเรียน
