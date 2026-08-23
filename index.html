@@ -3,22 +3,87 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#bfe9ff" />
-  <title>Fraction Quest VR</title>
+  <meta name="theme-color" content="#071a2b" />
+  <title>Fraction Quest AR</title>
   <link rel="stylesheet" href="./styles.css" />
-  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
 </head>
 <body>
-  <div id="desktop-help"><strong>Fraction Quest VR 🐰</strong><small>เลือก &lt; = &gt; เพื่อเปรียบเทียบเศษส่วน • กด Hint เพื่อเทียบกับ 1/2 • ใน Quest กด Enter VR แล้วใช้ trigger</small></div>
-  <a-scene id="game-scene" background="color: #BFE9FF" renderer="colorManagement: true; antialias: true" xr-mode-ui="enabled: true">
-    <a-plane position="0 0 -4" rotation="-90 0 0" width="24" height="24" color="#BDE8C8"></a-plane><a-sky color="#BFE9FF"></a-sky>
-    <a-entity light="type: ambient; intensity: 0.85; color: #FFFFFF"></a-entity><a-entity light="type: directional; intensity: 0.65" position="1 4 2"></a-entity>
-    <a-entity id="board" position="0 2.25 -4.5"><a-box width="7.8" height="4.6" depth="0.12" color="#FFFDF6"></a-box><a-text value="FRACTION QUEST VR" align="center" position="0 1.78 .08" color="#16324A" width="6"></a-text><a-text id="progress-text" value="Question 1 / 14" align="center" position="0 1.40 .08" color="#557086" width="4.5"></a-text><a-text id="left-fraction" value="3 / 8" align="center" position="-1.9 .72 .08" color="#16324A" width="4"></a-text><a-text value="?" align="center" position="0 .72 .08" color="#FF7A00" width="3"></a-text><a-text id="right-fraction" value="10 / 12" align="center" position="1.9 .72 .08" color="#16324A" width="4"></a-text><a-entity id="bars" position="0 .12 .1"></a-entity><a-text id="hint-text" value="Use 1/2 as your benchmark" align="center" position="0 -.55 .08" color="#557086" width="5"></a-text><a-text id="status-text" value="Choose the correct symbol" align="center" position="0 -1.45 .08" color="#16324A" width="5"></a-text></a-entity>
-    <a-entity id="answer-buttons" position="0 .9 -3.35"><a-box class="clickable answer" data-answer="<" position="-1.45 0 0" width="1.15" height=".72" depth=".22" color="#FFFFFF"></a-box><a-text value="<" align="center" position="-1.45 0 .13" color="#FF6B35" width="4"></a-text><a-box class="clickable answer" data-answer="=" position="0 0 0" width="1.15" height=".72" depth=".22" color="#FFFFFF"></a-box><a-text value="=" align="center" position="0 0 .13" color="#FF6B35" width="4"></a-text><a-box class="clickable answer" data-answer=">" position="1.45 0 0" width="1.15" height=".72" depth=".22" color="#FFFFFF"></a-box><a-text value=">" align="center" position="1.45 0 .13" color="#FF6B35" width="4"></a-text></a-entity>
-    <a-box id="hint-button" class="clickable" position="0 .15 -3.35" width="2.9" height=".56" depth=".18" color="#2F80ED"></a-box><a-text value="HINT: COMPARE TO 1/2" align="center" position="0 .15 -3.24" color="#FFFFFF" width="3.8"></a-text><a-text id="score-text" value="Stars: 0 | Score: 0" align="center" position="0 3.85 -4.45" color="#16324A" width="4.2"></a-text>
-    <a-entity id="bunny" position="3.35 .85 -4.15" animation__hop="property: position; to: 3.35 1.12 -4.15; dir: alternate; dur: 180; loop: 2; startEvents: bunnyHop"><a-sphere position="0 .62 0" radius=".43" color="#FFFFFF"></a-sphere><a-sphere position="0 .04 0" radius=".50" color="#FFFFFF"></a-sphere><a-box position="-.20 1.18 0" width=".20" height=".78" depth=".16" color="#FFFFFF"></a-box><a-box position=".20 1.18 0" width=".20" height=".78" depth=".16" color="#FFFFFF"></a-box><a-sphere position="-.15 .70 .38" radius=".055" color="#16324A"></a-sphere><a-sphere position=".15 .70 .38" radius=".055" color="#16324A"></a-sphere><a-sphere position="0 .56 .42" radius=".055" color="#FF8A8A"></a-sphere></a-entity>
-    <a-entity id="rig" position="0 1.6 0"><a-camera look-controls wasd-controls="enabled: false"><a-cursor fuse="false" raycaster="objects: .clickable" material="color: #16324A; shader: flat"></a-cursor></a-camera><a-entity laser-controls="hand: left" raycaster="objects: .clickable"></a-entity><a-entity laser-controls="hand: right" raycaster="objects: .clickable"></a-entity></a-entity>
-  </a-scene>
+  <div id="ar-app">
+    <video id="camera" autoplay playsinline muted aria-label="ภาพจากกล้องสำหรับโหมด AR"></video>
+    <canvas id="hand-canvas" aria-hidden="true"></canvas>
+    <div class="camera-vignette" aria-hidden="true"></div>
+
+    <header class="hud top-hud">
+      <div>
+        <div class="eyebrow">CAMERA AR • HAND TRACKING</div>
+        <h1>Fraction Quest AR <span>🐰</span></h1>
+      </div>
+      <div class="hud-stats">
+        <div><small>ข้อ</small><strong id="progress-text">1 / 14</strong></div>
+        <div><small>ดาว</small><strong id="star-text">0 ★</strong></div>
+        <div><small>คะแนน</small><strong id="score-text">0</strong></div>
+      </div>
+    </header>
+
+    <main id="game-layer">
+      <section id="question-card" class="glass-card" aria-live="polite">
+        <div class="mission-label">ภารกิจ: เลือกเครื่องหมายที่ถูกต้อง</div>
+        <div class="fraction-row">
+          <div id="left-fraction" class="fraction">3/8</div>
+          <div id="drop-zone" class="drop-zone" aria-label="วางเครื่องหมายตรงนี้">
+            <span id="drop-symbol">?</span>
+            <small>วางตรงนี้</small>
+          </div>
+          <div id="right-fraction" class="fraction">10/12</div>
+        </div>
+
+        <div id="hint-panel" class="hint-panel" hidden>
+          <div class="bar-row">
+            <span id="left-hint-label">3/8</span>
+            <div class="fraction-bar"><i class="half-marker"></i><b id="left-fill"></b></div>
+            <strong id="left-half">&lt; 1/2</strong>
+          </div>
+          <div class="bar-row">
+            <span id="right-hint-label">10/12</span>
+            <div class="fraction-bar"><i class="half-marker"></i><b id="right-fill"></b></div>
+            <strong id="right-half">&gt; 1/2</strong>
+          </div>
+        </div>
+        <div id="status-text" class="status-text">ยกมือขึ้นหน้ากล้อง แล้วจีบนิ้วโป้งกับนิ้วชี้เพื่อหยิบสัญลักษณ์</div>
+      </section>
+
+      <div id="hand-tip" class="hand-tip">
+        <span class="hand-icon">🤏</span>
+        <span><strong>จีบเพื่อหยิบ</strong><small>ขยับมือไปกลางโจทย์ แล้วปล่อยนิ้วเพื่อวาง</small></span>
+      </div>
+
+      <section id="symbol-tray" aria-label="สัญลักษณ์คำตอบ">
+        <button class="symbol-card" data-answer="<" type="button" aria-label="น้อยกว่า">&lt;<span></span></button>
+        <button class="symbol-card" data-answer="=" type="button" aria-label="เท่ากับ">=<span></span></button>
+        <button class="symbol-card" data-answer=">" type="button" aria-label="มากกว่า">&gt;<span></span></button>
+      </section>
+
+      <button id="hint-button" class="hint-button" type="button">💡 Hint: เทียบกับ 1/2</button>
+    </main>
+
+    <div id="hand-cursor" class="hand-cursor" aria-hidden="true"><span></span></div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <section id="start-screen" class="start-screen">
+      <div class="start-card">
+        <div class="mascot">🐰</div>
+        <div class="eyebrow">FRACTION QUEST AR</div>
+        <h2>ใช้มือจริงหยิบสัญลักษณ์ผ่านกล้อง</h2>
+        <p>เกมจะเปิดกล้องด้านหน้าและตรวจจับมือบนอุปกรณ์ของคุณ จากนั้น <strong>จีบนิ้วโป้ง + นิ้วชี้</strong> เพื่อหยิบ &lt; = &gt; แล้วลากไปวางระหว่างเศษส่วน</p>
+        <div class="gesture-demo"><span>✋</span><b>→</b><span>🤏</span><b>→</b><span class="mini-symbol">&gt;</span></div>
+        <button id="start-button" type="button">📷 เปิดกล้องและเริ่มเกม</button>
+        <small>กล้องใช้เพื่อประมวลผลการเคลื่อนไหวของมือในเบราว์เซอร์ • ต้องอนุญาตสิทธิ์กล้อง</small>
+        <div id="camera-error" class="camera-error" hidden></div>
+      </div>
+    </section>
+  </div>
+
   <script src="./src/game.js"></script>
 </body>
 </html>
