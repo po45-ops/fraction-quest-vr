@@ -6,10 +6,33 @@
   <meta name="theme-color" content="#071a2b" />
   <title>Fraction Quest AR</title>
   <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./home.css" />
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
 </head>
 <body>
   <div id="ar-app">
+    <section id="home-screen" aria-label="หน้าแรก Fraction Quest AR">
+      <div class="home-stage">
+        <img class="home-art" src="./assets/home/fraction-quest-ar-home-landscape.jpg" alt="หน้าแรกเกม Fraction Quest AR" />
+        <button id="home-start" class="home-hotspot" type="button" aria-label="เริ่มเกม">เริ่มเกม</button>
+        <button id="home-how" class="home-hotspot" type="button" aria-label="วิธีเล่น">วิธีเล่น</button>
+        <button id="home-settings" class="home-hotspot" type="button" aria-label="ตั้งค่า">ตั้งค่า</button>
+        <div class="home-click-hint">แตะปุ่มบนภาพเพื่อใช้งาน</div>
+      </div>
+    </section>
+
+    <section id="home-dialog" class="home-dialog" hidden aria-modal="true" role="dialog" aria-labelledby="home-dialog-title">
+      <div class="home-dialog-card">
+        <h2 id="home-dialog-title">วิธีเล่น</h2>
+        <div id="home-dialog-body"></div>
+        <div class="home-dialog-actions">
+          <button id="home-fullscreen" type="button" hidden>⛶ เปิด / ปิดเต็มหน้าจอ</button>
+          <button id="home-close" class="secondary" type="button">กลับหน้าแรก</button>
+        </div>
+        <div class="home-dialog-note">Fraction Quest AR • Camera-based hand tracking</div>
+      </div>
+    </section>
+
     <video id="camera" autoplay playsinline muted aria-label="ภาพจากกล้องสำหรับโหมด AR"></video>
     <canvas id="hand-canvas" aria-hidden="true"></canvas>
     <div class="camera-vignette" aria-hidden="true"></div>
@@ -84,6 +107,7 @@
     </section>
   </div>
 
+  <script src="./src/home.js"></script>
   <script src="./src/game.js"></script>
 </body>
 </html>
