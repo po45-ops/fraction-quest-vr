@@ -1,0 +1,16 @@
+[
+  {"id":1,"left":{"n":3,"d":8},"right":{"n":10,"d":12},"answer":"<"},
+  {"id":2,"left":{"n":4,"d":6},"right":{"n":4,"d":10},"answer":">"},
+  {"id":3,"left":{"n":9,"d":14},"right":{"n":1,"d":4},"answer":">"},
+  {"id":4,"left":{"n":11,"d":18},"right":{"n":7,"d":16},"answer":">"},
+  {"id":5,"left":{"n":17,"d":20},"right":{"n":12,"d":30},"answer":">"},
+  {"id":6,"left":{"n":15,"d":20},"right":{"n":3,"d":8},"answer":">"},
+  {"id":7,"left":{"n":4,"d":8},"right":{"n":10,"d":26},"answer":">"},
+  {"id":8,"left":{"n":17,"d":28},"right":{"n":1,"d":5},"answer":">"},
+  {"id":9,"left":{"n":6,"d":15},"right":{"n":15,"d":22},"answer":"<"},
+  {"id":10,"left":{"n":6,"d":10},"right":{"n":7,"d":16},"answer":">"},
+  {"id":11,"left":{"n":5,"d":12},"right":{"n":15,"d":24},"answer":"<"},
+  {"id":12,"left":{"n":3,"d":8},"right":{"n":11,"d":10},"answer":"<"},
+  {"id":13,"left":{"n":5,"d":8},"right":{"n":7,"d":14},"answer":">"},
+  {"id":14,"left":{"n":5,"d":6},"right":{"n":3,"d":10},"answer":">"}
+]
