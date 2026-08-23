@@ -13,46 +13,10 @@
   <div id="ar-app">
     <section id="home-screen" aria-label="หน้าแรก Fraction Quest AR">
       <div class="home-stage">
-        <img class="home-art" src="./assets/home/fraction-quest-ar-home-landscape.jpg" alt="" onerror="this.style.display='none'" />
-        <div class="home-shell">
-          <div class="home-left">
-            <div class="home-status">📷 <i></i> AR Camera Ready</div>
-            <div class="home-logo">
-              <span class="fraction">Fraction</span>
-              <span class="quest">Quest</span><span class="ar">AR</span>
-            </div>
-            <div class="home-subtitle">ผจญภัยเปรียบเทียบเศษส่วนผ่านกล้อง</div>
-            <div class="home-mascot-row">
-              <div class="home-bunny" aria-hidden="true">🐰</div>
-              <div class="home-symbols" aria-label="สัญลักษณ์เปรียบเทียบ"><span>&lt;</span><span>=</span><span>&gt;</span></div>
-            </div>
-          </div>
-
-          <div class="home-right">
-            <div class="home-card">
-              <div class="home-guide">
-                <div class="home-hand" aria-hidden="true">🤏</div>
-                <div>
-                  <h2>ยกมือขึ้นหน้ากล้อง</h2>
-                  <p><strong>จีบนิ้วเพื่อหยิบสัญลักษณ์</strong><br>ลากไปวางระหว่างเศษส่วน แล้วปล่อยนิ้ว</p>
-                </div>
-              </div>
-
-              <div class="home-example" aria-hidden="true">
-                <div class="home-frac-card"><span>3/8</span><i class="home-bar"></i></div>
-                <div class="home-question">?</div>
-                <div class="home-frac-card"><span>1/2</span><i class="home-bar half"></i></div>
-              </div>
-
-              <button id="home-start" class="home-primary" type="button">เริ่มเกม</button>
-              <div class="home-secondary-row">
-                <button id="home-how" class="home-secondary" type="button">📖 วิธีเล่น</button>
-                <button id="home-settings" class="home-secondary" type="button">⚙️ ตั้งค่า</button>
-              </div>
-              <div class="home-help">กด “เริ่มเกม” เพื่อเปิดกล้องและเข้าสู่โหมด AR</div>
-            </div>
-          </div>
-        </div>
+        <img class="home-art" src="./assets/home/fraction-quest-ar-home-landscape.jpg" alt="Fraction Quest AR หน้าเริ่มเกม" />
+        <button id="home-start" class="home-hotspot home-start-hotspot" type="button" aria-label="เริ่มเกม"><span class="sr-only">เริ่มเกม</span></button>
+        <button id="home-how" class="home-hotspot home-how-hotspot" type="button" aria-label="วิธีเล่น"><span class="sr-only">วิธีเล่น</span></button>
+        <button id="home-settings" class="home-hotspot home-settings-hotspot" type="button" aria-label="ตั้งค่า"><span class="sr-only">ตั้งค่า</span></button>
       </div>
     </section>
 
